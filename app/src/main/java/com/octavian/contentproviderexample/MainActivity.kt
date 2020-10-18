@@ -11,10 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 private const val TAG = "MainActivity"
@@ -57,8 +57,11 @@ class MainActivity : AppCompatActivity() {
                 val adapter = ArrayAdapter<String>(this, R.layout.contact_detail, R.id.name, contacts)
                 contact_names.adapter = adapter
             } else {
-                Snackbar.make(view, "Please grant access to your contacts", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+                Snackbar.make(view, "Please grant access to your contacts", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Action") {
+                        Toast.makeText(it.context, "Snackbar action clicked", Toast.LENGTH_SHORT)
+                            .show()
+                    }.show()
             }
 
             Log.d(TAG, "fab onClick: ends")
