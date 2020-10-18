@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.provider.ContactsContract
 import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
+import kotlinx.android.synthetic.main.content_main.*
 
 private const val TAG = "MainActivity"
 
@@ -22,7 +23,16 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "fab onClick: starts")
             val projection = arrayOf(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
 
-            var cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, projection, null, null, ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
+            val cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, projection, null, null, ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
+            val contacts = ArrayList<String>()
+            cursor?.use {
+                while (it.moveToNext()) {
+                    contacts.add(it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)))
+                }
+            }
+
+            val adapter = ArrayAdapter<String>(this, R.layout.contact_detail, R.id.name, contacts)
+            contact_names.adapter = adapter
 
             Log.d(TAG, "fab onClick: ends")
         }
