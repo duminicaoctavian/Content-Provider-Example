@@ -35,17 +35,21 @@ class MainActivity : AppCompatActivity() {
         val hasReadContactPermission = ContextCompat.checkSelfPermission(this, READ_CONTACTS)
         Log.d(TAG, "onCreate: checkSelfPermission returned $hasReadContactPermission")
 
-        if (hasReadContactPermission == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "onCreate: permission granted")
-//            readGranted = true // TODO don't do this
-        } else {
+        if (hasReadContactPermission != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "onCreate: requesting permission")
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(READ_CONTACTS),
-                REQUEST_CODE_READ_CONTACTS
-            )
+            ActivityCompat.requestPermissions(this, arrayOf(READ_CONTACTS), REQUEST_CODE_READ_CONTACTS)
         }
+//        if (hasReadContactPermission == PackageManager.PERMISSION_GRANTED) {
+//            Log.d(TAG, "onCreate: permission granted")
+////            readGranted = true // TODO don't do this
+//        } else {
+//            Log.d(TAG, "onCreate: requesting permission")
+//            ActivityCompat.requestPermissions(
+//                this,
+//                arrayOf(READ_CONTACTS),
+//                REQUEST_CODE_READ_CONTACTS
+//            )
+//        }
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
             Log.d(TAG, "fab onClick: starts")
@@ -53,13 +57,7 @@ class MainActivity : AppCompatActivity() {
             if (ContextCompat.checkSelfPermission(this, READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
                 val projection = arrayOf(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
 
-                val cursor = contentResolver.query(
-                    ContactsContract.Contacts.CONTENT_URI,
-                    projection,
-                    null,
-                    null,
-                    ContactsContract.Contacts.DISPLAY_NAME_PRIMARY
-                )
+                val cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, projection, null, null, ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
                 val contacts = ArrayList<String>()
                 cursor?.use {
                     while (it.moveToNext()) {
@@ -67,27 +65,15 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                val adapter =
-                    ArrayAdapter<String>(this, R.layout.contact_detail, R.id.name, contacts)
+                val adapter = ArrayAdapter<String>(this, R.layout.contact_detail, R.id.name, contacts)
                 contact_names.adapter = adapter
             } else {
-                Snackbar.make(
-                    view,
-                    "Please grant access to your contacts",
-                    Snackbar.LENGTH_INDEFINITE
-                )
+                Snackbar.make(view, "Please grant access to your contacts", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Grant Access") {
                         Log.d(TAG, "Snackbar onClick: starts")
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                                this,
-                                READ_CONTACTS
-                            )
-                        ) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, READ_CONTACTS)) {
                             Log.d(TAG, "Snackbar onClick: calling requestPermissions")
-                            ActivityCompat.requestPermissions(
-                                this, arrayOf(READ_CONTACTS),
-                                REQUEST_CODE_READ_CONTACTS
-                            )
+                            ActivityCompat.requestPermissions(this, arrayOf(READ_CONTACTS), REQUEST_CODE_READ_CONTACTS)
                         } else {
                             Log.d(TAG, "Snackbar onClick: launching settings")
                             val intent = Intent()
@@ -106,27 +92,23 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate: ends")
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        Log.d(TAG, "onRequestPermissionsResult: starts")
-        when (requestCode) {
-            REQUEST_CODE_READ_CONTACTS -> {
-//                readGranted =
-                    if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        Log.d(TAG, "onRequestPermissionsResult: permission granted")
-//                        true
-                    } else {
-                        Log.d(TAG, "onRequestPermissionsResult: permission refused")
-//                        false
-                    }
-//                fab.isEnabled = readGranted
-            }
-        }
-        Log.d(TAG, "onRequestPermissionsResult: ends")
-    }
+//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+//        Log.d(TAG, "onRequestPermissionsResult: starts")
+//        when (requestCode) {
+//            REQUEST_CODE_READ_CONTACTS -> {
+////                readGranted =
+//                    if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                        Log.d(TAG, "onRequestPermissionsResult: permission granted")
+////                        true
+//                    } else {
+//                        Log.d(TAG, "onRequestPermissionsResult: permission refused")
+////                        false
+//                    }
+////                fab.isEnabled = readGranted
+//            }
+//        }
+//        Log.d(TAG, "onRequestPermissionsResult: ends")
+//    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
