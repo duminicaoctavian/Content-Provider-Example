@@ -2,6 +2,7 @@ package com.octavian.contentproviderexample
 
 //import android.Manifest
 import android.Manifest.permission.READ_CONTACTS // static import from Java
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.util.Log
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -29,6 +31,14 @@ class MainActivity : AppCompatActivity() {
         val hasReadContactPermission = ContextCompat.checkSelfPermission(this, READ_CONTACTS)
         Log.d(TAG, "onCreate: checkSelfPermission returned $hasReadContactPermission")
 
+        if (hasReadContactPermission == PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "onCreate: permission granted")
+            readGranted = true // TODO don't do this
+        } else {
+            Log.d(TAG, "onCreate: requesting permission")
+            ActivityCompat.requestPermissions(this, arrayOf(READ_CONTACTS), REQUEST_CODE_READ_CONTACTS)
+        }
+
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
             Log.d(TAG, "fab onClick: starts")
             val projection = arrayOf(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
@@ -46,6 +56,23 @@ class MainActivity : AppCompatActivity() {
 
             Log.d(TAG, "fab onClick: ends")
         }
+        Log.d(TAG, "onCreate: ends")
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        Log.d(TAG, "onRequestPermissionsResult: starts")
+        when (requestCode) {
+            REQUEST_CODE_READ_CONTACTS -> {
+                readGranted = if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "onRequestPermissionsResult: permission granted")
+                    true
+                } else {
+                    Log.d(TAG, "onRequestPermissionsResult: permission refused")
+                    false
+                }
+            }
+        }
+        Log.d(TAG, "onRequestPermissionsResult: ends")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
