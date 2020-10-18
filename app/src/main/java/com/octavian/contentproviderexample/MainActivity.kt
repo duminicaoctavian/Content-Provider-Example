@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
@@ -25,7 +24,7 @@ private const val REQUEST_CODE_READ_CONTACTS = 1
 
 class MainActivity : AppCompatActivity() {
 
-    private var readGranted = false
+//    private var readGranted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         if (hasReadContactPermission == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "onCreate: permission granted")
-            readGranted = true // TODO don't do this
+//            readGranted = true // TODO don't do this
         } else {
             Log.d(TAG, "onCreate: requesting permission")
             ActivityCompat.requestPermissions(
@@ -50,7 +49,8 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
             Log.d(TAG, "fab onClick: starts")
-            if (readGranted) {
+//            if (readGranted) {
+            if (ContextCompat.checkSelfPermission(this, READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
                 val projection = arrayOf(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
 
                 val cursor = contentResolver.query(
@@ -114,13 +114,13 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onRequestPermissionsResult: starts")
         when (requestCode) {
             REQUEST_CODE_READ_CONTACTS -> {
-                readGranted =
+//                readGranted =
                     if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         Log.d(TAG, "onRequestPermissionsResult: permission granted")
-                        true
+//                        true
                     } else {
                         Log.d(TAG, "onRequestPermissionsResult: permission refused")
-                        false
+//                        false
                     }
 //                fab.isEnabled = readGranted
             }
